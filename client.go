@@ -2,7 +2,6 @@ package comfyui2go
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"io"
 	"sync"
@@ -73,8 +72,11 @@ func (c *Client) Prompt(ctx context.Context, prompt JSON) (string, error) {
 	if !r.IsSuccess() {
 		return "", fmt.Errorf("/prompt failed: %s", r.String())
 	}
-	if resp.PromptID == "" {
-		return "", errors.New("missing prompt_id in response")
+	if resp.Error.Type != "" {
+		return "", fmt.Errorf("prompt failed: type=%s, message=%s, details=%s, extra_info=%v", resp.Error.Type, resp.Error.Message, resp.Error.Details, resp.Error.ExtraInfo)
+	}
+	if len(resp.NodeErrors) > 0 {
+		return "", fmt.Errorf("prompt failed: node_errors=%v", resp.NodeErrors)
 	}
 	return resp.PromptID, nil
 }

@@ -23,6 +23,12 @@ type PromptResponse struct {
 	PromptID   string                 `json:"prompt_id"`
 	Number     int                    `json:"number"`
 	NodeErrors map[string]interface{} `json:"node_errors"`
+	Error      struct {
+		Type      string `json:"type"`
+		Message   string `json:"message"`
+		Details   string `json:"details"`
+		ExtraInfo JSON   `json:"extra_info"`
+	} `json:"error"`
 }
 
 // QueueResponse 对应 GET /queue 的最小结构。
